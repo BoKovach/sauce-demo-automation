@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
-
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class LoginPage:
     def __init__(self, driver):
@@ -20,3 +21,12 @@ class LoginPage:
 
     def error_message(self):
         return self.driver.find_element(*self.login_error_message).text
+
+    def logout(self):
+        menu_button = self.driver.find_element(By.ID, 'react-burger-menu-btn')
+        menu_button.click()
+
+        logout_button = WebDriverWait(self.driver, 5)\
+            .until(EC.visibility_of_element_located((By.ID, 'logout_sidebar_link')))
+
+        logout_button.click()
