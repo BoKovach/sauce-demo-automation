@@ -1,0 +1,1 @@
+{"uuid": "2d302767-ae7b-4638-a6de-16eac9c22f19", "children": ["1f8e58bc-7ce5-420c-a2f4-5e4d79c455b9"], "befores": [{"name": "login_and_go_to_inventory", "status": "passed", "start": 1752938634302, "stop": 1752938635537}], "start": 1752938634302, "stop": 1752938636479}
