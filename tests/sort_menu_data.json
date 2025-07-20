@@ -1,0 +1,18 @@
+[
+  {
+    "type": "ascending_name",
+    "case": "Name (A to Z)"
+  },
+  {
+    "type": "descending_name",
+    "case": "Name (Z to A)"
+  },
+  {
+    "type": "ascending_price",
+    "case": "Price (low to high)"
+  },
+  {
+    "type": "descending_price",
+    "case": "Price (high to low)"
+  }
+]

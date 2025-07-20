@@ -40,8 +40,14 @@ class InventoryPage:
     def is_sorted_descending(self, values):
         return values == sorted(values, reverse=True)
 
+    def get_all_items(self):
+        return self.driver.find_elements(*self.inventory_item)
+
     def get_items_count(self):
         return len(self.driver.find_elements(*self.inventory_item))
+
+    def get_button_text(self, item):
+        return item.find_element(By.TAG_NAME, 'button').text
 
     def get_inventory_items_props(self):
         items = [el for el in self.driver.find_elements(*self.inventory_item)]
@@ -74,12 +80,12 @@ class InventoryPage:
         prices = [float(el.text.replace('$', '')) for el in self.driver.find_elements(*self.inventory_item_price)]
         return prices
 
-    def add_product_to_cart(self):
-        add_button = self.driver.find_element(*self.add_to_cart_button)
+    def add_product_to_cart(self, item):
+        add_button = item.find_element(*self.add_to_cart_button)
         add_button.click()
 
-    def remove_product_from_cart(self):
-        remove_button = self.driver.find_element(*self.remove_button)
+    def remove_product_from_cart(self, item):
+        remove_button = item.find_element(*self.remove_button)
         remove_button.click()
 
     def get_cart_badge_count(self):

@@ -1,7 +1,7 @@
 import pytest
-from pages.login_page import LoginPage
-from utils.data_loader import load_login_data
-from pages.inventory_page import InventoryPage
+from utils.data_loader import load_login_data, load_sort_menu_data
+
+sort_menu = load_sort_menu_data()
 
 
 @pytest.mark.inventory
@@ -41,3 +41,58 @@ class TestsInventoryPage:
             assert product['img'], f"Product #{index} is missing a image."
             assert product['price'], f"Product #{index} is missing a price."
             assert product['button'] == "Add to cart", f"Product #{index} is missing button 'Add to cart'."
+
+    @pytest.mark.sorted
+    @pytest.mark.parametrize('data', sort_menu)
+    def test_sorted_by_name_and_price(self, login_and_go_to_inventory, data):
+        inventory = login_and_go_to_inventory
+        inventory.sort_by_text(data['case'])
+
+        sorted_products_name = inventory.get_inventory_items_name()
+        sorted_products_price = inventory.get_inventory_items_price()
+
+        if data['type'] == 'ascending_name':
+            assert inventory.is_sorted_ascending(sorted_products_name), f"Not sorted A-Z: {sorted_products_name}"
+
+        elif data['type'] == 'descending_name':
+            assert inventory.is_sorted_descending(sorted_products_name), f"Not sorted Z-A: {sorted_products_name}"
+
+        elif data['type'] == 'ascending_price':
+            assert inventory.is_sorted_ascending(sorted_products_price), f"Not sorted low to high price:" \
+                                                                         f" {sorted_products_price}"
+        elif data['type'] == 'descending_price':
+            assert inventory.is_sorted_descending(sorted_products_price), f"Not sorted high to low price:" \
+                                                                         f" {sorted_products_price}"
+
+    @pytest.mark.add
+    def test_add_product_to_cart(self, login_and_go_to_inventory):
+        inventory = login_and_go_to_inventory
+        cart_badge = inventory.get_cart_badge_count()
+
+        assert cart_badge == 0
+
+        product = inventory.get_all_items()[0]
+        assert inventory.get_button_text(product) == 'Add to cart'
+
+        inventory.add_product_to_cart(product)
+        cart_badge = inventory.get_cart_badge_count()
+        assert cart_badge == 1
+        assert inventory.get_button_text(product) == 'Remove'
+
+        inventory.remove_product_from_cart(product)
+
+    @pytest.mark.remove
+    def test_remove_product_to_cart(self, login_and_go_to_inventory):
+        inventory = login_and_go_to_inventory
+
+        product = inventory.get_all_items()[0]
+        inventory.add_product_to_cart(product)
+        cart_badge = inventory.get_cart_badge_count()
+
+        assert cart_badge == 1
+        assert inventory.get_button_text(product) == 'Remove'
+
+        inventory.remove_product_from_cart(product)
+        cart_badge = inventory.get_cart_badge_count()
+        assert cart_badge == 0
+        assert inventory.get_button_text(product) == 'Add to cart'
