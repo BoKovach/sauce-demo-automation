@@ -72,6 +72,9 @@ class InventoryPage:
 
         return all_items
 
+    def get_item_name(self, item):
+        return item.find_element(*self.inventory_item_name)
+
     def get_inventory_items_name(self):
         names = [el.text for el in self.driver.find_elements(*self.inventory_item_name)]
         return names

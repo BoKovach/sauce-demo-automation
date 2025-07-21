@@ -1,5 +1,6 @@
 import pytest
 
+from pages.cart_page import CartPage
 from pages.inventory_page import InventoryPage
 from pages.login_page import LoginPage
 from tests.test_login_logout import login_data
@@ -29,6 +30,26 @@ def login_and_go_to_inventory(driver):
 
     return InventoryPage(driver)
 
+
+@pytest.fixture()
+def add_product_and_go_to_cart(driver):
+    data = login_data[0]
+    login = LoginPage(driver)
+    inventory = InventoryPage(driver)
+    cart = CartPage(driver)
+
+    login.open()
+    login.login(data['username'], data['password'])
+
+    item = inventory.get_all_items()[0]
+    item_name = inventory.get_item_name(item).text
+
+    inventory.add_product_to_cart(item)
+
+    inventory.go_to_cart()
+    cart.wait_for_cart_page()
+
+    return cart, item_name
 
 # Hook for Screenshot for fail
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

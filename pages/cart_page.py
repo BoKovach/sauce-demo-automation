@@ -1,8 +1,7 @@
-import pytest
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-
-@pytest.mark.usefixtures
 class CartPage:
     def __init__(self, driver):
         self.driver = driver
@@ -21,22 +20,39 @@ class CartPage:
     def get_current_url(self):
         return self.driver.current_url
 
-    def get_all_products(self):
-        all_products = [el for el in self.driver.find_elements(*self.product_item)]
-        return all_products
+    def wait_for_cart_page(self):
+        WebDriverWait(self.driver, 5).until(EC.url_contains("/cart.html"))
 
-    def get_product_name(self, product):
-        return product.find_element(*self.product_name).text
+    def get_cart_items(self):
+        return self.driver.find_elements(*self.product_item)
 
-    def get_product_description(self, product):
-        return product.find_element(*self.product_description).text
+    def get_cart_items_count(self):
+        return len(self.get_cart_items())
 
-    def get_product_price(self, product):
-        return float(product.find_element(*self.product_price).text.replace('$', ''))
+    def get_item_name(self, item):
+        return item.find_element(*self.product_name).text
 
-    def get_product_quantity(self, product):
-        return product.find_element(*self.product_quantity).text
+    def get_item_description(self, item):
+        return item.find_element(*self.product_description).text
 
-    def get_product_button(self, product):
-        return product.find_element(*self.remove_product_button)
+    def get_item_price(self, item):
+        return float(item.find_element(*self.product_price).text.replace('$', ''))
+
+    def get_item_quantity(self, item):
+        return int(item.find_element(*self.product_quantity).text)
+
+    def get_remove_item_button(self, item):
+        return item.find_element(*self.remove_product_button)
+
+    def remove_item(self, item):
+        self.get_remove_item_button(item).click()
+
+    def click_continue_shopping_button(self):
+        self.driver.find_element(*self.continue_shopping_button).click()
+
+    def click_checkout_button(self):
+        self.driver.find_element(*self.checkout_button).click()
+
+    def is_cart_empty(self):
+        return self.get_cart_items_count() == 0
 
